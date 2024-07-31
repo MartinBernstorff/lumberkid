@@ -55,7 +55,7 @@ class GithubForge:
 
     def add(self, issue: "Issue"):
         """Issue is not needed for Github, since it infers from the first commit."""
-        cmd = f'gh pr create --title {_pr_title(issue)} --body ""'
+        cmd = f'gh pr create --title "{_pr_title(issue)}" --body ""'
         if self.start_as_draft:
             cmd += " --draft"
 
@@ -64,6 +64,8 @@ class GithubForge:
                 issue.assign(assignee="@me")
             if self.label_on_add:
                 issue.label(self.label_on_add)
+
+        interactive_cmd(cmd)
 
     def merge(self, automerge: bool, squash: bool):
         if self.start_as_draft:
