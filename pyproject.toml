@@ -3,7 +3,10 @@ version = "0.0.1"
 requires-python = ">=3.12"
 name = "lumberkid"
 description = "lumberkid"
-dependencies = []
+dependencies = [
+    "typer>=0.12.3",
+    "iterfzf>=1.4.0.51.0",
+]
 authors = [{ name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }]
 classifiers = ["Programming Language :: Python :: 3.12"]
 
@@ -11,8 +14,8 @@ classifiers = ["Programming Language :: Python :: 3.12"]
 file = "LICENSE"
 
 [project.scripts]
-lumberman = "lumberman.__main__:app"
-lm = "lumberman.__main__:app"
+lumberkid = "lumberkid.__main__:app"
+lk = "lumberkid.__main__:app"
 
 [project.readme]
 file = "README.md"

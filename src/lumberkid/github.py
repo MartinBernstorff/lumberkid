@@ -1,9 +1,11 @@
 import json
+import re
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Mapping, Optional, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Mapping, Self
 
-from lumberman.cli.subprocess_utils import shell_output
-from lumberman.issues.title_parser import IssueTitle, parse_issue_title
+from lumberkid.issues import Issue, IssueTitle, RemoteIssue
+from lumberkid.subprocess_utils import interactive_cmd, shell_output
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -26,43 +28,62 @@ def _parse_issue_comment(comment_json: Mapping[str, str]) -> IssueComment:
     )
 
 
+def _pr_title(issue: "Issue") -> str:
+    pr_title = issue.title.prefix if issue.title.prefix else ""
+    pr_title += issue.title.content
+
+    return pr_title
+
+
+def parse_issue_title(issue_title: str) -> IssueTitle:
+    # Get all string between start and first ":"
+    try:
+        prefix = re.findall(r"^(.*?)[\(:]", issue_title)[0]
+    except IndexError:
+        # No prefix found, return without prefix
+        return IssueTitle(prefix=None, content=issue_title)
+
+    description = re.findall(r": (.*)$", issue_title)[0]
+    return IssueTitle(prefix=prefix, content=description)
+
+
+class GithubForge:
+    start_as_draft: bool
+    assign_on_add: bool
+    label_on_add: str | None = ""
+
+    def add(self, issue: "Issue"):
+        """Issue is not needed for Github, since it infers from the first commit."""
+        cmd = f'gh pr create --title {_pr_title(issue)} --body ""'
+        if self.start_as_draft:
+            cmd += " --draft"
+
+        if isinstance(issue, RemoteIssue):
+            if self.assign_on_add:
+                issue.assign(assignee="@me")
+            if self.label_on_add:
+                issue.label(self.label_on_add)
+
+    def merge(self, automerge: bool, squash: bool):
+        if self.start_as_draft:
+            interactive_cmd("gh pr ready")
+
+        merge_cmd = "gh pr merge"
+        if automerge:
+            merge_cmd += " --auto-merge"
+        if squash:
+            merge_cmd += " --squash"
+
+        interactive_cmd(merge_cmd)
+
+
 def _create_label(label: str) -> None:
     shell_output(f"gh label create {label}")
 
 
-@runtime_checkable
-class Issue(Protocol):
-    title: IssueTitle
-
-
 @dataclass(frozen=True)
-class LocalIssue(Issue):
-    """Issue created by entering a title in the CLI"""
-
-    title: IssueTitle
-
-
-@runtime_checkable
-class RemoteIssue(Protocol):
-    """Issue created by a remote source (e.g. Github)"""
-
+class GithubIssue(RemoteIssue):
     entity_id: str
-    description: str
-
-    def label(self, label: str) -> None:
-        ...
-
-    def assign(self, assignee: str) -> None:
-        ...
-
-    def get_comments(self) -> "Sequence[IssueComment]":
-        ...
-
-
-@dataclass(frozen=True)
-class GithubIssue(Issue, RemoteIssue):
-    entity_id: str
-    title: IssueTitle
     description: str
 
     def _add_label(self, label: str) -> None:
@@ -99,24 +120,11 @@ class GithubIssue(Issue, RemoteIssue):
         shell_output(f"gh issue edit {int(self.entity_id)} --add-assignee {assignee}")
 
 
-class IssueProvider(Protocol):
-    def setup(self) -> None:
-        """Any setup needed, including installing CLI tools, etc."""
-        ...
-
-    def get_latest_issues(self, in_progress_label: str) -> "Sequence[GithubIssue]":
-        ...
-
-    def get_issues_assigned_to_me(self, in_progress_label: str) -> "Sequence[GithubIssue]":
-        ...
-
-    def get_current_issue(self) -> Optional[GithubIssue]:
-        ...
-
-
-class GithubIssueProvider(IssueProvider):
-    def setup(self) -> None:
+class GithubIssueProvider:
+    def setup(self) -> Self:
         pass
+
+        return self
 
     def _values_to_issue(self, values: dict[str, str]) -> GithubIssue:
         parsed_title = parse_issue_title(values["title"])
@@ -124,9 +132,9 @@ class GithubIssueProvider(IssueProvider):
             entity_id=str(values["number"]), title=parsed_title, description=values["body"]
         )
 
-    def get_latest_issues(self, in_progress_label: str) -> "Sequence[GithubIssue]":
+    def get_latest(self, filter_on_label: str) -> "Sequence[GithubIssue]":
         latest_issues = shell_output(
-            f"gh issue list --limit 10 --json number,title,body --search 'is:open -label:{in_progress_label}'"
+            f"gh issue list --limit 10 --json number,title,body --search 'is:open -label:{filter_on_label}'"
         )
 
         if latest_issues is None:
@@ -134,10 +142,10 @@ class GithubIssueProvider(IssueProvider):
 
         return self._parse_github_json_str(latest_issues)
 
-    def get_issues_assigned_to_me(self, in_progress_label: str) -> "Sequence[GithubIssue]":
+    def assigned_to_me(self, filter_on_label: str) -> "Sequence[GithubIssue]":
         """Get issues assigned to current user on current repo"""
         my_issues_cmd = shell_output(
-            f"gh issue list --assignee @me  --search '-label:{in_progress_label}' --json number,title,body"
+            f"gh issue list --assignee @me  --search '-label:{filter_on_label}' --json number,title,body"
         )
 
         if my_issues_cmd is None:
@@ -149,25 +157,3 @@ class GithubIssueProvider(IssueProvider):
         values = json.loads(issue_str)
         parsed_output = [self._values_to_issue(v) for v in values]
         return parsed_output
-
-    def get_current_issue(self) -> Optional[GithubIssue]:
-        current_branch: str = shell_output("git rev-parse --abbrev-ref HEAD")  # type: ignore
-
-        branch_items = current_branch.split("/")
-
-        if len(branch_items) != 3:
-            return None
-
-        return GithubIssue(
-            entity_id=branch_items[1],
-            title=IssueTitle(prefix=branch_items[0], content=branch_items[2]),
-            description="",
-        )
-
-
-if __name__ == "__main__":
-    GithubIssue(
-        entity_id="257",
-        title=IssueTitle(prefix="test-prefix", content="test-description"),
-        description="test-description",
-    ).get_comments()
