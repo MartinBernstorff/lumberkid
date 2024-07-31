@@ -2,7 +2,6 @@ import json
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-from tabnanny import check
 from typing import TYPE_CHECKING, Mapping, Self
 
 from lumberkid.issues import Issue, IssueTitle, RemoteIssue
@@ -25,7 +24,7 @@ def check_for_gh_cli():
 
 @dataclass
 class IssueComment:
-    id: str
+    id: str  # Test comment
     author_login: str
     body: str
     url: str
