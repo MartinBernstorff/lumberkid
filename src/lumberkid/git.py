@@ -19,4 +19,4 @@ class GitVCS:
         interactive_cmd([f"git checkout -b {_branch_title(issue)}"])
 
     def sync(self):
-        interactive_cmd(["git fetch origin/main", "git merge -b origin/main", "git push"])
+        interactive_cmd(["git pull origin main", "git push"])
