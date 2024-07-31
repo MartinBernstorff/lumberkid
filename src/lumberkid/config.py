@@ -1,17 +1,11 @@
-import enum
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Literal, Sequence
+from typing import TYPE_CHECKING, Callable
 
 from lumberkid.git import GitVCS
 from lumberkid.github import GithubForge, GithubIssueProvider, parse_issue_title
 
 if TYPE_CHECKING:
     from lumberkid.issues import IssueTitle
-
-
-class SyncOn(enum.Enum):
-    ALL = "all"
-    MANUAL = "manual"
 
 
 @dataclass(frozen=True)
@@ -27,7 +21,6 @@ class LumberkidConfig:
     squash: bool = True
 
     vcs: GitVCS = GitVCS()  # noqa: RUF009
-    sync_on: SyncOn = SyncOn.ALL
 
 
 def get_config() -> LumberkidConfig:
