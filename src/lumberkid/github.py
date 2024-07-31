@@ -2,6 +2,7 @@ import json
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
+from tabnanny import check
 from typing import TYPE_CHECKING, Mapping, Self
 
 from lumberkid.issues import Issue, IssueTitle, RemoteIssue
@@ -9,6 +10,17 @@ from lumberkid.subprocess_utils import interactive_cmd, shell_output
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+import shutil
+
+
+def cli_tool_exists(tool_name: str) -> bool:
+    return shutil.which(tool_name) is not None
+
+
+def check_for_gh_cli():
+    if not cli_tool_exists("gh"):
+        raise RuntimeError("GitHub CLI not found on your path at `gh`. Please install it.")
 
 
 @dataclass
@@ -52,6 +64,10 @@ class GithubForge:
     start_as_draft: bool
     assign_on_add: bool
     label_on_add: str | None = ""
+
+    def setup(self) -> Self:
+        check_for_gh_cli()
+        return self
 
     def add(self, issue: "Issue"):
         """Issue is not needed for Github, since it infers from the first commit."""
@@ -125,7 +141,7 @@ class GithubIssue(RemoteIssue):
 
 class GithubIssueProvider:
     def setup(self) -> Self:
-
+        check_for_gh_cli()
         return self
 
     def _values_to_issue(self, values: dict[str, str]) -> GithubIssue:
