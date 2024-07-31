@@ -2,7 +2,7 @@
 # Start template makefile #
 ###########################
 
-SRC_PATH = lumberman
+SRC_PATH = lumberkid
 MAKEFLAGS = --no-print-directory
 
 # Dependency management
@@ -41,9 +41,9 @@ validate_ci: ## Run all checks
 	@make test
 
 docker_ci: ## Run all checks in docker
-	@echo "🔨🔨🔨 Running all checks in docker 🔨🔨🔨"
-	docker build -t lumberman_ci -f .github/Dockerfile.dev .
-	docker run lumberman_ci make validate_ci
+	@echo "––– Running all checks in docker –––"
+	docker build -t lumberkid_ci -f .github/Dockerfile.dev .
+	docker run lumberkid_ci make validate_ci
 
 #########################
 # End template makefile #

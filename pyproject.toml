@@ -1,15 +1,11 @@
 [project]
-version = "0.53.0"
-requires-python = ">=3.10"
-name = "lumberman"
-description = "lumberman"
-dependencies = ["typer==0.12.3", "rich==13.7.1", "iterfzf>=1.1.0.44.0"]
+version = "0.0.1"
+requires-python = ">=3.12"
+name = "lumberkid"
+description = "lumberkid"
+dependencies = []
 authors = [{ name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }]
-classifiers = [
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-]
+classifiers = ["Programming Language :: Python :: 3.12"]
 
 [project.license]
 file = "LICENSE"
@@ -35,9 +31,9 @@ rye = { dev-dependencies = [
 ] }
 
 [project.urls]
-homepage = "https://github.com/MartinBernstorff/lumberman"
-repository = "https://github.com/MartinBernstorff/lumberman"
-documentation = "https://MartinBernstorff.github.io/lumberman/"
+homepage = "https://github.com/MartinBernstorff/lumberkid"
+repository = "https://github.com/MartinBernstorff/lumberkid"
+documentation = "https://MartinBernstorff.github.io/lumberkid/"
 
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm"]

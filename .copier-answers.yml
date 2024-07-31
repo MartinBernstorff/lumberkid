@@ -4,9 +4,9 @@ _src_path: https://github.com/MartinBernstorff/nimble-python-template
 email: martinbernstorff@gmail.com
 full_name: Martin Bernstorff
 github_username: MartinBernstorff
-package_name: lumberman
-project_name: lumberman
-project_slug: lumberman
-python_version: '3.10'
+package_name: lumberkid
+project_name: lumberkid
+project_slug: lumberkid
+python_version: '3.12'
 release_docker_image: false
 release_package: true
