@@ -29,7 +29,7 @@ def _parse_issue_comment(comment_json: Mapping[str, str]) -> IssueComment:
 
 
 def _pr_title(issue: "Issue") -> str:
-    pr_title = issue.title.prefix if issue.title.prefix else ""
+    pr_title = f"{issue.title.prefix}: " if issue.title.prefix else ""
     pr_title += issue.title.content
 
     return pr_title
