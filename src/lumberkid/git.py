@@ -15,10 +15,11 @@ def _branch_title(issue: "Issue") -> str:
 
 
 class GitVCS:
-    def add(self, issue: "Issue"):
+    def add(self, issue: "Issue", default_branch: str):
         interactive_cmd(
             [
-                f"git checkout -b {_branch_title(issue)}",
+                "git fetch origin",
+                f"git checkout -b {_branch_title(issue)} --no-track origin/{default_branch}",
                 f"git commit --allow-empty -m '{_branch_title(issue)}'",
                 "git push",
             ]

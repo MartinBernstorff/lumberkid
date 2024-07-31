@@ -1,3 +1,5 @@
+from email.policy import default
+
 from lumberkid.config import SyncOn, get_config
 from lumberkid.ui import IssueSelecter
 
@@ -14,7 +16,7 @@ def add() -> None:
         [*source.get_latest(cfg.in_progress_label), *source.assigned_to_me(cfg.in_progress_label)]
     )
 
-    cfg.vcs.add(selected)
+    cfg.vcs.add(selected, default_branch=cfg.default_branch)
     cfg.forge.add(selected)
 
     if cfg.sync_on == SyncOn.ALL:
@@ -27,7 +29,7 @@ def quick_add() -> None:
     if cfg.sync_on == SyncOn.ALL:
         sync()
 
-    cfg.vcs.add(issue)
+    cfg.vcs.add(issue, default_branch=cfg.default_branch)
     cfg.forge.add(issue)
 
 
