@@ -71,7 +71,7 @@ class GithubForge:
 
         merge_cmd = "gh pr merge"
         if automerge:
-            merge_cmd += " --auto-merge"
+            merge_cmd += " --auto"
         if squash:
             merge_cmd += " --squash"
 
