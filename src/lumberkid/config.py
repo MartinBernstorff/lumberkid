@@ -21,6 +21,8 @@ class LumberkidConfig:
     issue_title_parser: Callable[[str], "IssueTitle"] = parse_issue_title
     in_progress_label: str = "in-progress"
 
+    default_branch: str = "main"
+
     automerge: bool = True
     squash: bool = True
 
