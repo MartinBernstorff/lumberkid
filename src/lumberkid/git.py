@@ -16,7 +16,13 @@ def _branch_title(issue: "Issue") -> str:
 
 class GitVCS:
     def add(self, issue: "Issue"):
-        interactive_cmd([f"git checkout -b {_branch_title(issue)}"])
+        interactive_cmd(
+            [
+                f"git checkout -b {_branch_title(issue)}",
+                f"git commit --allow-empty -m '{_branch_title(issue)}'",
+                "git push",
+            ]
+        )
 
     def sync(self):
         interactive_cmd(["git pull origin main", "git push"])
