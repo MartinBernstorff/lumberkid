@@ -125,7 +125,6 @@ class GithubIssue(RemoteIssue):
 
 class GithubIssueProvider:
     def setup(self) -> Self:
-        pass
 
         return self
 
