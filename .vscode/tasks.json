@@ -1,0 +1,89 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run All Tasks",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "make: lint",
+                "make: types and test"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "type": "shell",
+            "command": "make lint",
+            "label": "make: lint",
+            "problemMatcher": [],
+            "presentation": {
+                "group": "buildTasks",
+                "panel": "dedicated",
+                "clear": true,
+                "reveal": "silent",
+            }
+        },
+        {
+            "label": "make: types and test",
+            "dependsOn": [
+                "make: types",
+                "make: test",
+                "diff"
+            ],
+            "dependsOrder": "parallel",
+            "problemMatcher": [],
+            "presentation": {
+                "group": "buildTasks",
+                "panel": "dedicated",
+                "clear": true,
+                "reveal": "silent",
+            }
+        },
+        {
+            "type": "shell",
+            "command": "make types",
+            "label": "make: types",
+            "problemMatcher": [],
+            "presentation": {
+                "group": "buildTasks",
+                "panel": "dedicated",
+                "clear": true,
+                "reveal": "silent",
+            }
+        },
+        {
+            "type": "shell",
+            "command": "git diff origin/main",
+            "label": "diff",
+            "problemMatcher": [],
+            "presentation": {
+                "group": "diff",
+                "panel": "dedicated",
+                "clear": true,
+                "reveal": "always",
+            }
+        },
+        {
+            "type": "shell",
+            "command": "make test",
+            "label": "make: test",
+            "problemMatcher": [],
+            "presentation": {
+                "group": "buildTasks",
+                "panel": "dedicated",
+                "clear": true,
+                "reveal": "silent",
+            }
+        }
+    ]
+}

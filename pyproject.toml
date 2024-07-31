@@ -1,0 +1,55 @@
+[project]
+version = "0.53.0"
+requires-python = ">=3.10"
+name = "lumberman"
+description = "lumberman"
+dependencies = ["typer==0.12.3", "rich==13.7.1", "iterfzf>=1.1.0.44.0"]
+authors = [{ name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }]
+classifiers = [
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+
+[project.license]
+file = "LICENSE"
+
+[project.scripts]
+lumberman = "lumberman.__main__:app"
+lm = "lumberman.__main__:app"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[tool]
+rye = { dev-dependencies = [
+  "diff-cover==8.0.3",
+  "pyright==1.1.350",
+  "pytest==7.4.0",
+  "pytest-cov==4.1.0",
+  "pytest-testmon==2.1.0",
+  "pytest-xdist==3.5.0",
+  "pytest-sugar==1.0.0",
+  "ruff==0.2.2",
+] }
+
+[project.urls]
+homepage = "https://github.com/MartinBernstorff/lumberman"
+repository = "https://github.com/MartinBernstorff/lumberman"
+documentation = "https://MartinBernstorff.github.io/lumberman/"
+
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"*" = ["py.typed", "*.pyi"]
+
+[tool.semantic_release]
+branch = "main"
+version_toml = ["pyproject.toml:project.version"]
+build_command = "python -m pip install build; python -m build"
