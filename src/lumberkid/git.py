@@ -1,7 +1,5 @@
-from typing import TYPE_CHECKING
-
 from lumberkid.issues import Issue, RemoteIssue
-from lumberkid.subprocess_utils import interactive_cmd
+from lumberkid.subprocess_utils import interactive_cmd, shell_output
 
 
 def _branch_title(issue: "Issue") -> str:
@@ -14,16 +12,26 @@ def _branch_title(issue: "Issue") -> str:
     return base_name.replace(" ", "_")
 
 
+def _git_clean() -> bool:
+    git_status = shell_output("git status --porcelain")
+    return git_status is None or git_status.strip() != ""
+
+
 class GitVCS:
-    def add(self, issue: "Issue", default_branch: str):
+    def add(self, issue: "Issue", default_branch: str, migrate_changes: bool):
+        needs_migration = migrate_changes and not _git_clean()
+
+        if needs_migration:
+            interactive_cmd("git stash")
         interactive_cmd(
             [
                 "git fetch origin",
                 f"git checkout -b {_branch_title(issue)} --no-track origin/{default_branch}",
-                f"git commit --allow-empty -m '{_branch_title(issue)}'",
-                "git push",
             ]
         )
+        if needs_migration:
+            interactive_cmd("git stash pop")
+        interactive_cmd([f"git commit --allow-empty -m '{_branch_title(issue)}'", "git push"])
 
     def sync(self):
         interactive_cmd(["git pull origin main", "git push"])
