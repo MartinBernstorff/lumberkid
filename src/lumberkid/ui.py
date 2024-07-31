@@ -1,22 +1,17 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Callable, Protocol
 
 import typer
 from iterfzf import iterfzf  # type: ignore
-from rich.console import Console
 
-from .provider import GithubIssue, Issue, LocalIssue
-from .title_parser import parse_issue_title
+from lumberkid.issues import IssueTitle, LocalIssue
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-console = Console()
+    from lumberkid.issues import Issue
 
-
-class IssueSelecter(Protocol):
-    def select_issue_dialog(self, issues: "Sequence[GithubIssue]") -> Issue:
-        ...
+    from .github import GithubIssue
 
 
 @dataclass(frozen=True)
@@ -29,7 +24,9 @@ class FZFSelection:
 
 
 @dataclass(frozen=True)
-class DefaultIssueSelecter(IssueSelecter):
+class IssueSelecter:
+    issue_title_parser: Callable[[str], "IssueTitle"]
+
     def _show_selection_dialog(self, issues: "Sequence[GithubIssue]") -> FZFSelection:
         issue_titles = [f"{issue.title.content} #{issue.entity_id}" for issue in issues]
         if len(issue_titles) == 0:
@@ -39,7 +36,7 @@ class DefaultIssueSelecter(IssueSelecter):
         selection: tuple(str, str) = iterfzf([*issue_titles], print_query=True, exact=True)  # type: ignore
         return FZFSelection(input_str=selection[0], selected_str=selection[1])  # type: ignore
 
-    def select_issue_dialog(self, issues: "Sequence[GithubIssue]") -> Issue:
+    def select_issue_dialog(self, issues: "Sequence[GithubIssue]") -> "Issue":
         fzf_selection = self._show_selection_dialog(issues=issues)
         selected_issue_title = fzf_selection.either()
 
@@ -47,5 +44,5 @@ class DefaultIssueSelecter(IssueSelecter):
         if selected_issue_from_list:
             return next(issue for issue in selected_issue_from_list)
 
-        parsed_title = parse_issue_title(selected_issue_title)
+        parsed_title = self.issue_title_parser(selected_issue_title)
         return LocalIssue(title=parsed_title)

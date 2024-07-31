@@ -1,8 +1,8 @@
 from subprocess import STDOUT
-from typing import Optional
+from typing import Optional, Sequence
 
 
-def interactive_cmd(command: str) -> None:
+def _run_cmd(command: str) -> None:
     import subprocess
 
     try:
@@ -18,6 +18,15 @@ def interactive_cmd(command: str) -> None:
             error_message += f"\n\tOutput: {e.stdout.decode('utf-8').strip()}"
 
         raise RuntimeError(error_message) from e
+
+
+def interactive_cmd(command: str | Sequence[str]) -> None:
+    match command:
+        case str():
+            _run_cmd(command)
+        case _:
+            for cmd in command:
+                _run_cmd(cmd)
 
 
 def shell_output(command: str) -> Optional[str]:
