@@ -16,7 +16,7 @@ class SyncOn(enum.Enum):
 
 @dataclass(frozen=True)
 class LumberkidConfig:
-    forge: GithubForge = GithubForge()  # noqa: RUF009
+    forge: GithubForge = GithubForge(start_as_draft=False, assign_on_add=False, label_on_add=None)  # noqa: RUF009
     issue_source: GithubIssueProvider = GithubIssueProvider()  # noqa: RUF009
     issue_title_parser: Callable[[str], "IssueTitle"] = parse_issue_title
     in_progress_label: str = "in-progress"

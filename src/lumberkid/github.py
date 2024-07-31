@@ -47,6 +47,7 @@ def parse_issue_title(issue_title: str) -> IssueTitle:
     return IssueTitle(prefix=prefix, content=description)
 
 
+@dataclass(frozen=True)
 class GithubForge:
     start_as_draft: bool
     assign_on_add: bool
