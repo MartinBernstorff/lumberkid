@@ -24,7 +24,7 @@ def check_for_gh_cli():
 
 @dataclass
 class IssueComment:
-    id: str  # Test comment
+    id: str
     author_login: str
     body: str
     url: str
