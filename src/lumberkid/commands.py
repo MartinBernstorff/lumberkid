@@ -9,21 +9,21 @@ def sync() -> None:
 
 def add() -> None:
     cfg = get_config()
-    source = cfg.issue_source
+    source = cfg.issue_source.setup()
     selected = IssueSelecter(cfg.issue_title_parser).select_issue_dialog(
         [*source.get_latest(cfg.in_progress_label), *source.assigned_to_me(cfg.in_progress_label)]
     )
     cfg.vcs.add(selected, default_branch=cfg.default_branch, migrate_changes=cfg.migrate_changes)
-    cfg.forge.add(selected)
+    cfg.forge.setup().add(selected)
 
 
 def quick_add() -> None:
     cfg = get_config()
     issue = IssueSelecter(cfg.issue_title_parser).select_issue_dialog([])
     cfg.vcs.add(issue, default_branch=cfg.default_branch, migrate_changes=cfg.migrate_changes)
-    cfg.forge.add(issue)
+    cfg.forge.setup().add(issue)
 
 
 def merge() -> None:
     cfg = get_config()
-    cfg.forge.merge(cfg.automerge, cfg.squash)
+    cfg.forge.setup().merge(cfg.automerge, cfg.squash)

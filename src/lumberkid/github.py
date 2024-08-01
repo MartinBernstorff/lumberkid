@@ -2,7 +2,7 @@ import json
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Mapping, Type
+from typing import TYPE_CHECKING, Any, Mapping, Self, Type
 
 from lumberkid.issues import Issue, IssueTitle, RemoteIssue
 from lumberkid.subprocess_utils import interactive_cmd, shell_output
@@ -64,8 +64,10 @@ class GithubForge:
     assign_on_add: bool
     label_on_add: str | None = ""
 
-    def __post_init__(self) -> None:
+    def setup(self) -> Self:
+        """Setup. Not using __post_init__ to enable config parsing in tests without requiring gh cli."""
         check_for_gh_cli()
+        return self
 
     @classmethod
     def from_toml(cls: Type["GithubForge"], toml: dict[str, Any]) -> "GithubForge":
@@ -146,8 +148,10 @@ class GithubIssue(RemoteIssue):
 
 
 class GithubIssueProvider:
-    def __post_init__(self) -> None:
+    def setup(self) -> Self:
+        """Setup. Not using __post_init__ to enable config parsing in tests without requiring gh cli."""
         check_for_gh_cli()
+        return self
 
     @classmethod
     def from_toml(
