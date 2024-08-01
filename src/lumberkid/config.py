@@ -94,13 +94,17 @@ def load_toml(path: "Path") -> dict[str, Any] | None:
         return None
 
 
-def _get_closest_config(starting_path: "Path") -> LumberkidConfig | None:
+def get_closest_config(starting_path: "Path") -> LumberkidConfig | None:
     """Get the config from the closest parent directory. If no config is found in cwd, move up a dir, and try again. If no config is found, return None."""
     cwd = starting_path
     while cwd.exists():
         config_path = cwd / ".lumberkid.toml"
         if config_path.exists():
             return LumberkidConfig.from_toml(config_path)
+
+        has_parent = cwd.parent != cwd
+        if not has_parent:
+            break
         cwd = cwd.parent
     return None
 
@@ -110,7 +114,7 @@ def get_config(starting_path: Path | None = None) -> LumberkidConfig:
     if starting_path is None:
         starting_path = Path.cwd()
 
-    closest_config = _get_closest_config(starting_path)
+    closest_config = get_closest_config(starting_path)
 
     return closest_config or LumberkidConfig.from_defaults({})
 
