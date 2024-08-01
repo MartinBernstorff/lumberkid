@@ -19,7 +19,12 @@ assign_on_add = true
 label_on_add = "test_label"
 """
     )
-    config = get_config(tmp_path)
+
+    # To check upwards traversal, we need to create a child directory
+    child_dir = tmp_path / "a" / "b"
+    child_dir.mkdir(parents=True)
+    config = get_config(child_dir)
+
     assert config.forge.start_as_draft is False
     assert config.forge.assign_on_add is True
     assert config.forge.label_on_add == "test_label"
