@@ -1,4 +1,3 @@
-
 from lumberkid.config import get_config
 from lumberkid.ui import IssueSelecter
 
@@ -10,7 +9,7 @@ def sync() -> None:
 
 
 def add() -> None:
-    source = cfg.issue_source.setup()
+    source = cfg.issue_source
     selected = IssueSelecter(cfg.issue_title_parser).select_issue_dialog(
         [*source.get_latest(cfg.in_progress_label), *source.assigned_to_me(cfg.in_progress_label)]
     )
