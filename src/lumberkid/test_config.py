@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from lumberkid.config import LumberkidConfig, load_toml
+from lumberkid.config import LumberkidConfig
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -13,6 +13,8 @@ def test_config_retrieval(tmp_path: "Path") -> None:
         """
 [forge]
 start_as_draft = false
+
+[issue_source]
 assign_on_add = true
 label_on_add = "test_label"
 """
@@ -21,8 +23,12 @@ label_on_add = "test_label"
     assert config.forge.start_as_draft is False
     assert config.forge.assign_on_add is True
     assert config.forge.label_on_add == "test_label"
+    assert config.automerge is True
 
 
 def test_config_from_defaults() -> None:
     config = LumberkidConfig.from_defaults({})
+
+    # TD: Does this fail if a key is spelt wrong in the default config?
+
     assert config.forge.start_as_draft is False

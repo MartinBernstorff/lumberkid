@@ -2,7 +2,7 @@ import json
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Mapping, Self, Type
+from typing import TYPE_CHECKING, Any, Mapping, Type
 
 from lumberkid.issues import Issue, IssueTitle, RemoteIssue
 from lumberkid.subprocess_utils import interactive_cmd, shell_output
@@ -70,9 +70,9 @@ class GithubForge:
     @classmethod
     def from_toml(cls: Type["GithubForge"], toml: dict[str, Any]) -> "GithubForge":
         return cls(
-            start_as_draft=toml["start_as_draft"],  # type: ignore
-            assign_on_add=toml["assign_on_add"],  # type: ignore
-            label_on_add=toml["label_on_add"],  # type: ignore
+            start_as_draft=toml["forge"]["start_as_draft"],  # type: ignore
+            assign_on_add=toml["issue_source"]["assign_on_add"],  # type: ignore
+            label_on_add=toml["issue_source"]["label_on_add"],  # type: ignore
         )
 
     def add(self, issue: "Issue"):

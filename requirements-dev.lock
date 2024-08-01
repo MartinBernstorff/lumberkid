@@ -35,8 +35,6 @@ nodeenv==1.8.0
 packaging==23.2
     # via pytest
     # via pytest-sugar
-platformdirs==4.2.2
-    # via lumberkid
 pluggy==1.4.0
     # via diff-cover
     # via pytest

@@ -1,1 +1,0 @@
-forge = { start_as_draft = false, assign_on_add = true, label_on_add = "test_label" }

@@ -1,9 +1,7 @@
-from dataclasses import dataclass, field
-from os import close
+from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Mapping, Type, TypeVar, override
+from typing import TYPE_CHECKING, Any, Callable, Mapping, Type
 
-import platformdirs
 import tomllib
 
 from lumberkid.git import GitVCS
@@ -12,7 +10,22 @@ from lumberkid.github import GithubForge, GithubIssueProvider, parse_issue_title
 if TYPE_CHECKING:
     from lumberkid.issues import IssueTitle
 
-S = TypeVar("S")
+
+def deep_merge(dict1: dict[str, Any], dict2: dict[str, Any]) -> dict[str, Any]:
+    result = dict1.copy()
+    for key, value in dict2.items():
+        # Combine dicts
+        original_contains_dict = (
+            isinstance(value, dict) and key in result and isinstance(result[key], dict)
+        )
+        if original_contains_dict:
+            result[key] = deep_merge(result[key], value)  # type: ignore
+        # Combined lists
+        elif isinstance(value, list) and key in result and isinstance(result[key], list):
+            result[key] = result[key] + value
+        else:
+            result[key] = value
+    return result
 
 
 @dataclass(frozen=True)
@@ -33,33 +46,26 @@ class LumberkidConfig:
 
     @classmethod
     def _get_forge(cls: Type["LumberkidConfig"], toml: Mapping[str, Any] | None) -> GithubForge:
-        try:
-            return GithubForge.from_toml(toml["forge"])  # type: ignore
-        except KeyError:
-            return GithubForge(start_as_draft=False, assign_on_add=False, label_on_add=None)
+        return GithubForge.from_toml(toml)  # type: ignore
 
     @classmethod
     def _get_issue_source(
         cls: Type["LumberkidConfig"], toml: Mapping[str, Any] | None
     ) -> GithubIssueProvider:
-        try:
-            return GithubIssueProvider.from_toml(toml["issue_source"])  # type: ignore
-        except KeyError:
-            return GithubIssueProvider()
+        return GithubIssueProvider.from_toml(toml["issue_source"])  # type: ignore
 
     @classmethod
     def _get_vcs(cls: Type["LumberkidConfig"], toml: Mapping[str, Any] | None) -> GitVCS:
-        try:
-            return GitVCS.from_toml(toml["vcs"])  # type: ignore
-        except KeyError:
-            return GitVCS()
+        return GitVCS.from_toml(toml["vcs"])  # type: ignore
 
     @classmethod
     def from_defaults(
-        cls: Type["LumberkidConfig"], overrides: Mapping[str, Any] = {}
+        cls: Type["LumberkidConfig"], overrides: dict[str, Any] | None = None
     ) -> "LumberkidConfig":
-        default_config = load_toml(Path(__file__).parent / "default_config.toml")
-        merged: Mapping[str, Any] = {**default_config, **overrides}  # type: ignore
+        if overrides is None:
+            overrides = {}
+        default_config: dict[str, Any] = load_toml(Path(__file__).parent / "default_config.toml")  # type: ignore
+        merged: Mapping[str, Any] = deep_merge(default_config, overrides)
 
         return cls(
             forge=cls._get_forge(merged),
@@ -80,7 +86,7 @@ class LumberkidConfig:
         return cls.from_defaults(toml if toml is not None else {})
 
 
-def load_toml(path: "Path") -> Mapping[str, Any] | None:
+def load_toml(path: "Path") -> dict[str, Any] | None:
     try:
         with open(path, "rb") as f:  # noqa: PTH123
             return tomllib.load(f)
