@@ -2,7 +2,7 @@ import json
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Mapping, Self
+from typing import TYPE_CHECKING, Any, Mapping, Self, Type
 
 from lumberkid.issues import Issue, IssueTitle, RemoteIssue
 from lumberkid.subprocess_utils import interactive_cmd, shell_output
@@ -65,8 +65,17 @@ class GithubForge:
     label_on_add: str | None = ""
 
     def setup(self) -> Self:
+        """Setup. Not using __post_init__ to enable config parsing in tests without requiring gh cli."""
         check_for_gh_cli()
         return self
+
+    @classmethod
+    def from_toml(cls: Type["GithubForge"], toml: dict[str, Any]) -> "GithubForge":
+        return cls(
+            start_as_draft=toml["forge"]["start_as_draft"],  # type: ignore
+            assign_on_add=toml["issue_source"]["assign_on_add"],  # type: ignore
+            label_on_add=toml["issue_source"]["label_on_add"],  # type: ignore
+        )
 
     def add(self, issue: "Issue"):
         """Issue is not needed for Github, since it infers from the first commit."""
@@ -140,8 +149,18 @@ class GithubIssue(RemoteIssue):
 
 class GithubIssueProvider:
     def setup(self) -> Self:
+        """Setup. Not using __post_init__ to enable config parsing in tests without requiring gh cli."""
         check_for_gh_cli()
         return self
+
+    @classmethod
+    def from_toml(
+        cls: Type["GithubIssueProvider"], toml: dict[str, Any] | None
+    ) -> "GithubIssueProvider":
+        if toml is None:
+            return cls()
+
+        return cls()
 
     def _values_to_issue(self, values: dict[str, str]) -> GithubIssue:
         parsed_title = parse_issue_title(values["title"])

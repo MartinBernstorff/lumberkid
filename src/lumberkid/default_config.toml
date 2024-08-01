@@ -1,0 +1,19 @@
+[lumberkid]
+migrate_changes = true
+
+[forge]
+provider = "github"
+start_as_draft = false
+squash = true
+automerge = true
+
+[issue_source]
+provider = "github"
+issue_title_parser = "default"
+assign_on_add = false
+label_on_add = ""
+in_progress_label = ""
+
+[vcs]
+provider = "git"
+default_branch = "main"

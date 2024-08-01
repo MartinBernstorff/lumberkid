@@ -1,7 +1,6 @@
 {
         "python.testing.pytestArgs": [
-                "lumberkid",
-                "src",
+                "src"
         ],
         "python.testing.unittestEnabled": false,
         "python.testing.pytestEnabled": true,

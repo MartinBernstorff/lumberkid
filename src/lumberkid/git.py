@@ -1,3 +1,5 @@
+from typing import Any, Type
+
 from lumberkid.issues import Issue, RemoteIssue
 from lumberkid.subprocess_utils import interactive_cmd, shell_output
 
@@ -18,6 +20,13 @@ def _git_clean() -> bool:
 
 
 class GitVCS:
+    @classmethod
+    def from_toml(cls: Type["GitVCS"], toml: dict[str, Any] | None) -> "GitVCS":
+        if toml is None:
+            return cls()
+
+        return cls()
+
     def add(self, issue: "Issue", default_branch: str, migrate_changes: bool):
         needs_migration = migrate_changes and not _git_clean()
 
