@@ -45,20 +45,6 @@ class LumberkidConfig:
     vcs: GitVCS
 
     @classmethod
-    def _get_forge(cls: Type["LumberkidConfig"], toml: Mapping[str, Any] | None) -> GithubForge:
-        return GithubForge.from_toml(toml)  # type: ignore
-
-    @classmethod
-    def _get_issue_source(
-        cls: Type["LumberkidConfig"], toml: Mapping[str, Any] | None
-    ) -> GithubIssueProvider:
-        return GithubIssueProvider.from_toml(toml["issue_source"])  # type: ignore
-
-    @classmethod
-    def _get_vcs(cls: Type["LumberkidConfig"], toml: Mapping[str, Any] | None) -> GitVCS:
-        return GitVCS.from_toml(toml["vcs"])  # type: ignore
-
-    @classmethod
     def from_defaults(
         cls: Type["LumberkidConfig"], overrides: dict[str, Any] | None = None
     ) -> "LumberkidConfig":
@@ -68,15 +54,15 @@ class LumberkidConfig:
         merged: Mapping[str, Any] = deep_merge(default_config, overrides)
 
         return cls(
-            forge=cls._get_forge(merged),
-            issue_source=cls._get_issue_source(merged),
+            forge=GithubForge.from_toml(merged),  # type: ignore
+            issue_source=GithubIssueProvider.from_toml(merged["issue_source"]),  # type: ignore
             issue_title_parser=parse_issue_title,
             in_progress_label=merged["issue_source"]["in_progress_label"],  # type: ignore
             default_branch=merged["vcs"]["default_branch"],  # type: ignore
             migrate_changes=merged["lumberkid"]["migrate_changes"],  # type: ignore
             automerge=merged["forge"]["automerge"],  # type: ignore
             squash=merged["forge"]["squash"],  # type: ignore
-            vcs=cls._get_vcs(merged),
+            vcs=GitVCS.from_toml(merged["vcs"]),  # type: ignore
         )
 
     @classmethod
