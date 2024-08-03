@@ -10,8 +10,8 @@ def test_config_upwards_traversal(tmp_path: "Path") -> None:
 start_as_draft = false
 
 [issue_source]
-assign_on_add = true
-label_on_add = "test_label"
+assign_on_begin = true
+label_on_begin = "test_label"
 """
     )
 
@@ -21,8 +21,8 @@ label_on_add = "test_label"
     config = get_config(child_dir)
 
     assert config.forge.start_as_draft is False
-    assert config.forge.assign_on_add is True
-    assert config.forge.label_on_add == "test_label"
+    assert config.issue_source.assign_on_begin is True
+    assert config.issue_source.label_on_begin == "test_label"
     assert config.automerge is True
 
 

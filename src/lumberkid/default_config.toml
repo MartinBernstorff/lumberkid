@@ -9,8 +9,8 @@ automerge = true       # Whether to enable automerge when calling merge
 
 [issue_source]
 provider = "github"
-assign_on_add = ""  # Who to assign to when adding an issue. Input "@me" to assign to current user.
-label_on_add = ""   # Label to add when adding an issue. Input "" to not add a label.
+assign_on_begin = "" # Who to assign to when adding an issue. Input "@me" to assign to current user.
+label_on_begin = ""  # Label to add when adding an issue. Input "" to not add a label.
 
 [vcs]
 provider = "git"

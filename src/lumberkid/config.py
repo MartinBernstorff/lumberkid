@@ -34,7 +34,6 @@ class LumberkidConfig:
 
     issue_source: GithubIssueProvider
     issue_title_parser: Callable[[str], "IssueTitle"]
-    in_progress_label: str
 
     default_branch: str
     migrate_changes: bool
@@ -57,7 +56,6 @@ class LumberkidConfig:
             forge=GithubForge.from_toml(merged),  # type: ignore
             issue_source=GithubIssueProvider.from_toml(merged["issue_source"]),  # type: ignore
             issue_title_parser=parse_issue_title,
-            in_progress_label=merged["issue_source"]["in_progress_label"],  # type: ignore
             default_branch=merged["vcs"]["default_branch"],  # type: ignore
             migrate_changes=merged["lumberkid"]["migrate_changes"],  # type: ignore
             automerge=merged["forge"]["automerge"],  # type: ignore

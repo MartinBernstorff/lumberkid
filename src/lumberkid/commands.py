@@ -7,7 +7,7 @@ def sync() -> None:
     cfg.vcs.sync()
 
 
-def add() -> None:
+def begin() -> None:
     cfg = get_config()
     source = cfg.issue_source.setup()
     selected = IssueSelecter(cfg.issue_title_parser).select_issue_dialog(

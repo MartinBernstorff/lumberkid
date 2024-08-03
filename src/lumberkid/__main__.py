@@ -34,7 +34,7 @@ commands = [
     CommandSection(
         name="Change Manager",
         commands=[
-            Command(name="[a]dd", fn=cmd.add),
+            Command(name="[b]egin", fn=cmd.begin),
             Command(name="[q]uick-add", fn=cmd.quick_add),
             Command(name="[s]ync", fn=cmd.sync),
             Command(name="[m]erge", fn=cmd.merge),
