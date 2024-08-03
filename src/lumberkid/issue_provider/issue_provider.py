@@ -4,7 +4,7 @@ import pydantic
 
 if TYPE_CHECKING:
     from lumberkid.issue_provider.github_provider import GithubIssue
-    from lumberkid.issues import Issue
+    from lumberkid.issue_provider.issues import Issue
 
 
 class IssueProviderConfig(pydantic.BaseModel):

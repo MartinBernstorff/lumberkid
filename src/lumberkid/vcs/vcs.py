@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Literal, Protocol
 import pydantic
 
 if TYPE_CHECKING:
-    from lumberkid.issues import Issue
+    from lumberkid.issue_provider.issues import Issue
 
 
 class VCSConfig(pydantic.BaseModel):

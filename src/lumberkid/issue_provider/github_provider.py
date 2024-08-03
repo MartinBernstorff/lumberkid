@@ -3,11 +3,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Sequence
 
 from lumberkid.forge.github_forge import check_for_gh_cli, parse_issue_title
-from lumberkid.issues import RemoteIssue
+from lumberkid.issue_provider.issues import RemoteIssue
 from lumberkid.subprocess_utils import shell_output
 
 if TYPE_CHECKING:
-    from lumberkid.issues import Issue
+    from lumberkid.issue_provider.issues import Issue
 
 
 @dataclass(frozen=True)

@@ -1,4 +1,4 @@
-from lumberkid.issues import Issue, RemoteIssue
+from lumberkid.issue_provider.issues import Issue, RemoteIssue
 from lumberkid.subprocess_utils import interactive_cmd, shell_output
 
 

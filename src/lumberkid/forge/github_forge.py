@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Mapping
 
-from lumberkid.issues import Issue, IssueTitle
+from lumberkid.issue_provider.issues import Issue, IssueTitle
 from lumberkid.subprocess_utils import interactive_cmd, shell_output
 
 if TYPE_CHECKING:
