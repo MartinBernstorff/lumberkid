@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING, Callable
 import typer
 from iterfzf import iterfzf  # type: ignore
 
-from lumberkid.issues import IssueTitle, LocalIssue
+from lumberkid.issue_provider.issues import IssueTitle, LocalIssue
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from lumberkid.issue_provider.github_provider import GithubIssue
-    from lumberkid.issues import Issue
+    from lumberkid.issue_provider.issues import Issue
 
 
 @dataclass(frozen=True)

@@ -15,21 +15,10 @@ class LumberkidBaseConfig(pydantic.BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-def deep_merge(dict1: dict[str, Any], dict2: dict[str, Any]) -> dict[str, Any]:
-    result = dict1.copy()
-    for key, value in dict2.items():
-        # Combine dicts
-        original_contains_dict = (
-            isinstance(value, dict) and key in result and isinstance(result[key], dict)
-        )
-        if original_contains_dict:
-            result[key] = deep_merge(result[key], value)  # type: ignore
-        # Combined lists
-        elif isinstance(value, list) and key in result and isinstance(result[key], list):
-            result[key] = result[key] + value
-        else:
-            result[key] = value
-    return result
+class LumberkidConfig(LumberkidBaseConfig):
+    forge: "ForgeConfig" = ForgeConfig()
+    issues: "IssueProviderConfig" = IssueProviderConfig()
+    vcs: "VCSConfig" = VCSConfig()
 
 
 @dataclass(frozen=True)
@@ -37,12 +26,6 @@ class LumberkidApp:
     forge: Forge
     issues: IssueProvider
     vcs: VCS
-
-
-class LumberkidConfig(LumberkidBaseConfig):
-    forge: "ForgeConfig" = ForgeConfig()
-    issues: "IssueProviderConfig" = IssueProviderConfig()
-    vcs: "VCSConfig" = VCSConfig()
 
 
 def load_toml(path: "Path") -> dict[str, Any]:
