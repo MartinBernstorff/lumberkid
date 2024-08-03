@@ -9,9 +9,8 @@ from lumberkid.issues import IssueTitle, LocalIssue
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from lumberkid.issue_provider.github_provider import GithubIssue
     from lumberkid.issues import Issue
-
-    from .github import GithubIssue
 
 
 @dataclass(frozen=True)
