@@ -1,10 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional, Protocol, runtime_checkable
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-
-    from lumberkid.github import IssueComment
+from typing import Optional, Protocol, runtime_checkable
 
 
 @dataclass(frozen=True)
@@ -37,12 +32,3 @@ class RemoteIssue(Issue):
     title: IssueTitle
     entity_id: str
     description: str
-
-    def label(self, label: str) -> None:
-        ...
-
-    def assign(self, assignee: str) -> None:
-        ...
-
-    def get_comments(self) -> "Sequence[IssueComment]":
-        ...

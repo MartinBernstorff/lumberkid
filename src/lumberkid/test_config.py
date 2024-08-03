@@ -34,6 +34,4 @@ def test_no_parent_config_found() -> None:
 def test_config_from_defaults() -> None:
     config = LumberkidConfig.from_defaults({})
 
-    # TD: Does this fail if a key is spelt wrong in the default config?
-
     assert config.forge.start_as_draft is False

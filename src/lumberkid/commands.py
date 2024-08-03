@@ -14,6 +14,7 @@ def add() -> None:
         [*source.get_latest(cfg.in_progress_label), *source.assigned_to_me(cfg.in_progress_label)]
     )
     cfg.vcs.add(selected, default_branch=cfg.default_branch, migrate_changes=cfg.migrate_changes)
+    cfg.issue_source.add(selected)
     cfg.forge.setup().add(selected)
 
 

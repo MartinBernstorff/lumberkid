@@ -58,11 +58,13 @@ def parse_issue_title(issue_title: str) -> IssueTitle:
     return IssueTitle(prefix=prefix, content=description)
 
 
+def _create_label(label: str) -> None:
+    shell_output(f"gh label create {label}")
+
+
 @dataclass(frozen=True)
 class GithubForge:
     start_as_draft: bool
-    assign_on_add: bool
-    label_on_add: str | None = ""
 
     def setup(self) -> Self:
         """Setup. Not using __post_init__ to enable config parsing in tests without requiring gh cli."""
@@ -83,12 +85,6 @@ class GithubForge:
         if self.start_as_draft:
             cmd += " --draft"
 
-        if isinstance(issue, RemoteIssue):
-            if self.assign_on_add:
-                issue.assign(assignee="@me")
-            if self.label_on_add:
-                issue.label(self.label_on_add)
-
         interactive_cmd(cmd)
 
     def merge(self, automerge: bool, squash: bool):
@@ -104,8 +100,14 @@ class GithubForge:
         interactive_cmd(merge_cmd)
 
 
-def _create_label(label: str) -> None:
-    shell_output(f"gh label create {label}")
+def _add_label(label: str, issue_id: str) -> None:
+    shell_output(f"gh issue edit {int(issue_id)} --add-label {label}")
+
+
+def get_comments(issue_id: str) -> "Sequence[IssueComment]":
+    comments_json = shell_output(f"gh issue view {issue_id} --json comments")
+    comments: Sequence[Mapping[str, str]] = json.loads(comments_json)["comments"]  # type: ignore
+    return [_parse_issue_comment(c) for c in comments]
 
 
 @dataclass(frozen=True)
@@ -113,41 +115,25 @@ class GithubIssue(RemoteIssue):
     entity_id: str
     description: str
 
-    def _add_label(self, label: str) -> None:
-        if not self.entity_id:
-            return
 
-        shell_output(f"gh issue edit {int(self.entity_id)} --add-label {label}")
-
-    def label(self, label: str) -> None:
-        if not self.entity_id:
-            return
-
-        try:
-            self._add_label(label)
-        except Exception:
-            try:
-                _create_label(label)
-                self._add_label(label)
-            except Exception as e:
-                raise RuntimeError(f"Error labeling issue {self.entity_id} with {label}") from e
-
-    def get_comments(self) -> "Sequence[IssueComment]":
-        if not self.entity_id:
-            return []
-
-        comments_json = shell_output(f"gh issue view {self.entity_id} --json comments")
-        comments: Sequence[Mapping[str, str]] = json.loads(comments_json)["comments"]  # type: ignore
-        return [_parse_issue_comment(c) for c in comments]
-
-    def assign(self, assignee: str) -> None:
-        if not self.entity_id:
-            return
-
-        shell_output(f"gh issue edit {int(self.entity_id)} --add-assignee {assignee}")
+def _parse_github_json_str(issue_str: str) -> "Sequence[GithubIssue]":
+    values = json.loads(issue_str)
+    parsed_output = [_values_to_issue(v) for v in values]
+    return parsed_output
 
 
+def _values_to_issue(values: dict[str, str]) -> GithubIssue:
+    parsed_title = parse_issue_title(values["title"])
+    return GithubIssue(
+        entity_id=str(values["number"]), title=parsed_title, description=values["body"]
+    )
+
+
+@dataclass(frozen=True)
 class GithubIssueProvider:
+    assign_on_add: str = ""
+    label_on_add: str | None = ""
+
     def setup(self) -> Self:
         """Setup. Not using __post_init__ to enable config parsing in tests without requiring gh cli."""
         check_for_gh_cli()
@@ -162,11 +148,13 @@ class GithubIssueProvider:
 
         return cls()
 
-    def _values_to_issue(self, values: dict[str, str]) -> GithubIssue:
-        parsed_title = parse_issue_title(values["title"])
-        return GithubIssue(
-            entity_id=str(values["number"]), title=parsed_title, description=values["body"]
-        )
+    def add(self, issue: "Issue"):
+        """Issue is not needed for Github, since it infers from the first commit."""
+        if isinstance(issue, RemoteIssue):
+            if self.assign_on_add:
+                self.assign(assignee="@me", issue_id=issue.entity_id)
+            if self.label_on_add:
+                self.label(self.label_on_add, issue_id=issue.entity_id)
 
     def get_latest(self, filter_on_label: str) -> "Sequence[GithubIssue]":
         latest_issues = shell_output(
@@ -176,7 +164,7 @@ class GithubIssueProvider:
         if latest_issues is None:
             return []
 
-        return self._parse_github_json_str(latest_issues)
+        return _parse_github_json_str(latest_issues)
 
     def assigned_to_me(self, filter_on_label: str) -> "Sequence[GithubIssue]":
         """Get issues assigned to current user on current repo"""
@@ -187,9 +175,20 @@ class GithubIssueProvider:
         if my_issues_cmd is None:
             return []
 
-        return self._parse_github_json_str(my_issues_cmd)
+        return _parse_github_json_str(my_issues_cmd)
 
-    def _parse_github_json_str(self, issue_str: str) -> "Sequence[GithubIssue]":
-        values = json.loads(issue_str)
-        parsed_output = [self._values_to_issue(v) for v in values]
-        return parsed_output
+    def label(self, label: str, issue_id: str) -> None:
+        if not issue_id:
+            return
+
+        try:
+            _add_label(label, issue_id)
+        except Exception:
+            try:
+                _create_label(label)
+                _add_label(label, issue_id)
+            except Exception as e:
+                raise RuntimeError(f"Error labeling issue {issue_id} with {label}") from e
+
+    def assign(self, assignee: str, issue_id: str) -> None:
+        shell_output(f"gh issue edit {int(issue_id)} --add-assignee {assignee}")
