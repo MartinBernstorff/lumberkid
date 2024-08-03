@@ -2,6 +2,39 @@
 
 
 
+## v0.2.0 (2024-08-03)
+
+### Feature
+
+* feat: improve performance (#14)
+
+* improve_performance
+
+* update commands.py and github_forge.py ([`bbb7b0d`](https://github.com/MartinBernstorff/lumberkid/commit/bbb7b0d8c143472199a6a011c1593f0e0b70e8fc))
+
+### Refactor
+
+* refactor: add pydantic validation layer to config (#13)
+
+* add_pydantic_validation_layer_to_config
+
+* update 8 files and delete 4 files
+
+* update 3 files and delete 1 file
+
+* update 7 files ([`537c3cf`](https://github.com/MartinBernstorff/lumberkid/commit/537c3cfd7735f56f5e930f2eead807e8ab838d10))
+
+* refactor: move issue handling into provider (#12)
+
+* move_issue_handling_into_provider
+
+* update 5 files
+
+* update 6 files
+
+* update commands.py, git.py and github.py ([`88c81c0`](https://github.com/MartinBernstorff/lumberkid/commit/88c81c0a7da0c69251826f14b661a5e1dd1ccc61))
+
+
 ## v0.1.0 (2024-08-01)
 
 ### Chore
