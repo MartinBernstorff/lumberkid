@@ -85,8 +85,6 @@ def merge(automerge: bool, squash: bool, mark_as_ready: bool):
 
     interactive_cmd(merge_cmd)
 
-    return
-
 
 def get_comments(issue_id: str) -> "Sequence[IssueComment]":
     comments_json = shell_output(f"gh issue view {issue_id} --json comments")

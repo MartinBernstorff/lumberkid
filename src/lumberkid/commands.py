@@ -50,7 +50,6 @@ def quick_add() -> None:
 
 def merge() -> None:
     cfg = get_config()
-    app = get_app()
-    get_forge(cfg.forge)
-    app.forge.setup()
-    app.forge.merge(cfg.forge.automerge, cfg.forge.squash, mark_as_ready=cfg.forge.start_as_draft)
+    forge = get_forge(cfg.forge)
+    forge.setup()
+    forge.merge(cfg.forge.automerge, cfg.forge.squash, mark_as_ready=cfg.forge.start_as_draft)
