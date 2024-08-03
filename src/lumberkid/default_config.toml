@@ -1,18 +1,16 @@
 [lumberkid]
-migrate_changes = true
+migrate_changes = true # Whether to stash and migrate changes before adding a new issue
 
 [forge]
-provider = "github"
-start_as_draft = false
-squash = true
-automerge = true
+provider = "github"    # Which forge to use. Currently only github is supported.
+start_as_draft = false # Start PRs as drafts
+squash = true          # Squash changes on the forge
+automerge = true       # Whether to enable automerge when calling merge
 
 [issue_source]
 provider = "github"
-issue_title_parser = "default"
-assign_on_add = false
-label_on_add = ""
-in_progress_label = ""
+assign_on_begin = "" # Who to assign to when adding an issue. Input "@me" to assign to current user.
+label_on_begin = ""  # Label to add when adding an issue. Input "" to not add a label.
 
 [vcs]
 provider = "git"
