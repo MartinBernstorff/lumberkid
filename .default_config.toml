@@ -1,0 +1,15 @@
+[forge]
+provider = "github"
+start_as_draft = false
+automerge = true
+squash = true
+
+[issues]
+provider = "github"
+assign_on_begin = ""
+label_on_begin = ""
+
+[vcs]
+provider = "git"
+default_branch = "main"
+migrate_changes = true

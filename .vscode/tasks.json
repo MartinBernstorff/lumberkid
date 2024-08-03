@@ -27,7 +27,6 @@
             "label": "make: lint",
             "problemMatcher": [],
             "presentation": {
-                "group": "buildTasks",
                 "panel": "dedicated",
                 "clear": true,
                 "reveal": "silent",
@@ -43,7 +42,6 @@
             "dependsOrder": "parallel",
             "problemMatcher": [],
             "presentation": {
-                "group": "buildTasks",
                 "panel": "dedicated",
                 "clear": true,
                 "reveal": "silent",
@@ -55,7 +53,6 @@
             "label": "make: types",
             "problemMatcher": [],
             "presentation": {
-                "group": "buildTasks",
                 "panel": "dedicated",
                 "clear": true,
                 "reveal": "silent",
@@ -67,7 +64,6 @@
             "label": "diff",
             "problemMatcher": [],
             "presentation": {
-                "group": "diff",
                 "panel": "dedicated",
                 "clear": true,
                 "reveal": "always",
