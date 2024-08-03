@@ -75,7 +75,7 @@ class GithubForge:
     def from_toml(cls: Type["GithubForge"], toml: dict[str, Any]) -> "GithubForge":
         return cls(start_as_draft=toml["forge"]["start_as_draft"])
 
-    def add(self, issue: "Issue"):
+    def begin(self, issue: "Issue"):
         """Issue is not needed for Github, since it infers from the first commit."""
         cmd = f'gh pr create --title "{_pr_title(issue)}" --body ""'
         if self.start_as_draft:
@@ -128,7 +128,7 @@ def _values_to_issue(values: dict[str, str]) -> GithubIssue:
 @dataclass(frozen=True)
 class GithubIssueProvider:
     assign_on_begin: str = ""
-    label_on_begin: str | None = ""
+    label_on_begin: str = ""
 
     def setup(self) -> Self:
         """Setup. Not using __post_init__ to enable config parsing in tests without requiring gh cli."""
@@ -144,11 +144,11 @@ class GithubIssueProvider:
 
         return cls(assign_on_begin=toml["assign_on_begin"], label_on_begin=toml["label_on_begin"])
 
-    def add(self, issue: "Issue"):
+    def begin(self, issue: "Issue"):
         """Issue is not needed for Github, since it infers from the first commit."""
         if isinstance(issue, RemoteIssue):
             if self.assign_on_begin:
-                self.assign(assignee="@me", issue_id=issue.entity_id)
+                self.assign(assignee=self.assign_on_begin, issue_id=issue.entity_id)
             if self.label_on_begin:
                 self.label(self.label_on_begin, issue_id=issue.entity_id)
 

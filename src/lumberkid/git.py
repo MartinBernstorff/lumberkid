@@ -27,7 +27,7 @@ class GitVCS:
 
         return cls()
 
-    def add(self, issue: "Issue", default_branch: str, migrate_changes: bool):
+    def begin(self, issue: "Issue", default_branch: str, migrate_changes: bool):
         needs_migration = migrate_changes and not _git_clean()
 
         if needs_migration:
