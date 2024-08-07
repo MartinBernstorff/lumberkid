@@ -2,6 +2,19 @@
 
 
 
+## v0.3.0 (2024-08-07)
+
+### Feature
+
+* feat: support older python versions (#15)
+
+* support_older_python_versions
+
+* build(deps): update .copier-answers.yml, Dockerfile.dev and pyproject.toml
+
+* update 5 files ([`bb1aa64`](https://github.com/MartinBernstorff/lumberkid/commit/bb1aa647ea21564045847aa2917aa85bdec0993c))
+
+
 ## v0.2.0 (2024-08-03)
 
 ### Feature
