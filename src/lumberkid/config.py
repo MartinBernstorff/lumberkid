@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 import pydantic
-import tomllib
+import toml
 from pydantic import ConfigDict
 
 from lumberkid.forge.forge import Forge, ForgeConfig
@@ -28,18 +27,13 @@ class LumberkidApp:
     vcs: VCS
 
 
-def load_toml(path: "Path") -> dict[str, Any]:
-    with open(path, "rb") as f:  # noqa: PTH123
-        return tomllib.load(f)
-
-
 def get_closest_config(starting_path: "Path") -> LumberkidConfig | None:
     """Get the config from the closest parent directory. If no config is found in cwd, move up a dir, and try again. If no config is found, return None."""
     cwd = starting_path
     while cwd.exists():
         config_path = cwd / ".lumberkid.toml"
         if config_path.exists():
-            return LumberkidConfig(**load_toml(config_path))
+            return LumberkidConfig(**toml.load(config_path))
 
         has_parent = cwd.parent != cwd
         if not has_parent:
