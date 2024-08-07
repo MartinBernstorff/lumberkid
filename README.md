@@ -19,7 +19,7 @@
 ## Installation
 
 ```bash
-pipx install lumberman
+pipx install lumberkid
 ```
 
 ## Usage
@@ -27,37 +27,17 @@ pipx install lumberman
 To see inline documentation:
 
 ```bash
-lumberman
+lumberkid
 ```
 
 Or the alias:
 
 ```bash
-lm
+lk
 ```
 
-<img align="right" src="https://github.com/MartinBernstorff/lumberman/assets/8526086/11effdd6-39aa-4f05-8eba-2ea730278e10"/>
-
-## Case study
-
-Let's look at a case! Say you're working on branch A, and you notice you can add an optimisation by making a small configuration change. Previously, you would have to:
-
-1. Switch from branch A to main
-1. Pull main to ensure you're aligned with remote
-1. Create a new branch from main
-1. Name the branch (Patch)
-1. Commit changes
-1. Push
-1. Create a PR
-1. Switch to branch A
-1. Merge the Patch-cfg branch into branch A
-
-But with lumberman:
-
-1. lm insert bottom
-1. Commit changes
-1. lm sync
-1. lm top
+## Configuration
+See the default configuration file in `.default_configuration.toml`.
 
 ### Setting up a development environment
 
