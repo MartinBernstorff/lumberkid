@@ -37,7 +37,7 @@ def begin() -> None:
     app.forge.begin(selected, cfg.forge.start_as_draft)
 
 
-def quick_add() -> None:
+def rapid_add() -> None:
     cfg = get_config()
     app = get_app()
     issue = IssueSelecter(parse_issue_title).select_issue_dialog([])
